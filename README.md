@@ -1,3 +1,3 @@
-### wmk-project
+## Olivekeke
 
-A Simple Prediction of World Cup Results for the Data-Mining final project
+A Simple Prediction of World Cup Results for the Data-Mining final project.
