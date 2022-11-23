@@ -191,11 +191,8 @@ df["date"] = pd.to_datetime(df["date"])
 rank = rank[(rank["rank_date"] >= "2019-1-1")].reset_index(drop=True)
 df = df[(df["date"] >= "2019-1-1")].reset_index(drop=True)
 
-rank["country_full"] = rank["country_full"].str.replace("IR Iran", "Iran").str.replace("Korea Republic",
-																					   "South Korea").str.replace("USA",
-																												  "United States")
-rank = rank.set_index(['rank_date']).groupby(['country_full'], group_keys=False).resample('D').first().fillna(
-	method='ffill').reset_index()
+rank["country_full"] = rank["country_full"].str.replace("IR Iran", "Iran").str.replace("Korea Republic", "South Korea").str.replace("USA", "United States")
+rank = rank.set_index(['rank_date']).groupby(['country_full'], group_keys=False).resample('D').first().fillna(method='ffill').reset_index()
 
 world_cup = pd.read_csv("Fifa_Worldcup_2022_Groups.csv")
 # 替换国家名称
