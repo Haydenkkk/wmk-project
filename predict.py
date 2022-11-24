@@ -13,6 +13,8 @@ from sklearn.ensemble import RandomForestClassifier
 import lightgbm as lgb
 from sklearn.linear_model import LogisticRegression
 
+plt.rcParams['savefig.dpi'] = 300
+plt.rcParams['figure.dpi'] = 300
 warnings.filterwarnings("ignore")
 
 
@@ -93,6 +95,8 @@ def get_result(world_cup, model, wmk, margin):
 	next_round_wc = next_round_wc.set_index('Team')
 
 	next_round_wc.plot.barh()
+	# ax.spines['right'].set_visible(False)
+	# ax.spines['top'].set_visible(False)
 	plt.title('round of 16 points({})'.format(wmk))
 	plt.tight_layout()
 	plt.show()
@@ -150,7 +154,8 @@ def get_result(world_cup, model, wmk, margin):
 	ax.set_xticks(x)
 	ax.set_xticklabels(labels[0:8])
 	ax.set_title('Round of 16({})'.format(wmk))
-	ax.spines["top"].set_visible(False)
+	ax.spines['right'].set_visible(False)
+	ax.spines['top'].set_visible(False)
 	fig.tight_layout()
 	autolabel(rects1)
 	autolabel(rects2)
@@ -161,11 +166,12 @@ def get_result(world_cup, model, wmk, margin):
 	fig, ax = plt.subplots()
 	rects3 = ax.bar(x - width / 2, left[8:12], width)
 	rects4 = ax.bar(x + width / 2, right[8:12], width)
+	ax.spines['right'].set_visible(False)
+	ax.spines['top'].set_visible(False)
 	ax.set_ylabel('Probability')
 	ax.set_xticks(x)
 	ax.set_xticklabels(labels[8:12])
 	ax.set_title('Quarterfinal({})'.format(wmk))
-	ax.spines["top"].set_visible(False)
 	autolabel(rects3)
 	autolabel(rects4)
 	plt.show()
@@ -175,11 +181,12 @@ def get_result(world_cup, model, wmk, margin):
 	fig, ax = plt.subplots()
 	rects5 = ax.bar(x - width / 2, left[12:], width)
 	rects6 = ax.bar(x + width / 2, right[12:], width)
+	ax.spines['right'].set_visible(False)
+	ax.spines['top'].set_visible(False)
 	ax.set_ylabel('Probability')
 	ax.set_xticks(x)
 	ax.set_xticklabels(labels[12:])
 	ax.set_title('Semifinal and Final({})'.format(wmk))
-	ax.spines["top"].set_visible(False)
 	autolabel(rects5)
 	autolabel(rects6)
 	plt.show()
@@ -194,8 +201,11 @@ df["date"] = pd.to_datetime(df["date"])
 rank = rank[(rank["rank_date"] >= "2019-1-1")].reset_index(drop=True)
 df = df[(df["date"] >= "2019-1-1")].reset_index(drop=True)
 
-rank["country_full"] = rank["country_full"].str.replace("IR Iran", "Iran").str.replace("Korea Republic", "South Korea").str.replace("USA", "United States")
-rank = rank.set_index(['rank_date']).groupby(['country_full'], group_keys=False).resample('D').first().fillna(method='ffill').reset_index()
+rank["country_full"] = rank["country_full"].str.replace("IR Iran", "Iran").str.replace("Korea Republic",
+																					   "South Korea").str.replace("USA",
+																												  "United States")
+rank = rank.set_index(['rank_date']).groupby(['country_full'], group_keys=False).resample('D').first().fillna(
+	method='ffill').reset_index()
 
 world_cup = pd.read_csv("Fifa_Worldcup_2022_Groups.csv")
 # 替换国家名称
@@ -276,8 +286,8 @@ world_cup['points'] = 0
 world_cup['total_prob'] = 0
 
 get_result(world_cup, model_lgb, 'lightgbm', margin)
-get_result(world_cup, model_xgb, 'XGBClassifier', margin)
-get_result(world_cup, model_rf, 'RandomForest', margin)
-get_result(world_cup, model_nn, 'MLPClassifier', margin)
-get_result(world_cup, model_dt, 'DecisionTreeClassifier', margin)
-get_result(world_cup, model_lr, 'LogisticRegression', margin)
+# get_result(world_cup, model_xgb, 'XGBClassifier', margin)
+# get_result(world_cup, model_rf, 'RandomForest', margin)
+# get_result(world_cup, model_nn, 'MLPClassifier', margin)
+# get_result(world_cup, model_dt, 'DecisionTreeClassifier', margin)
+# get_result(world_cup, model_lr, 'LogisticRegression', margin)
