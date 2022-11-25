@@ -93,12 +93,11 @@ def get_result(world_cup, model, wmk, margin):
 	next_round_wc = next_round_wc.reset_index()
 	next_round_wc = next_round_wc.loc[pairing]
 	next_round_wc = next_round_wc.set_index('Team')
-
+	plt.style.use('Solarize_Light2')
 	next_round_wc.plot.barh()
-	# ax.spines['right'].set_visible(False)
-	# ax.spines['top'].set_visible(False)
-	plt.title('round of 16 points({})'.format(wmk))
+	plt.title('round of 16 points({})'.format(wmk), fontsize=12)
 	plt.tight_layout()
+	plt.savefig('round of 16 points({})'.format(wmk))
 	plt.show()
 	finals = ['Round_of_16', 'Quarterfinal', 'Semifinal', 'Final']
 
@@ -148,47 +147,51 @@ def get_result(world_cup, model, wmk, margin):
 	x = np.arange(8)
 	width = 0.35
 	fig, ax = plt.subplots()
-	rects1 = ax.bar(x - width / 2, left[0:8], width)
-	rects2 = ax.bar(x + width / 2, right[0:8], width)
+	rects1 = ax.bar(x - width / 2, left[0:8], width, color='#008080')
+	rects2 = ax.bar(x + width / 2, right[0:8], width, color='#800000')
 	ax.set_ylabel('Probability')
 	ax.set_xticks(x)
 	ax.set_xticklabels(labels[0:8])
-	ax.set_title('Round of 16({})'.format(wmk))
+	ax.set_title('Round of 16({})'.format(wmk), fontsize=12)
 	ax.spines['right'].set_visible(False)
 	ax.spines['top'].set_visible(False)
 	fig.tight_layout()
 	autolabel(rects1)
 	autolabel(rects2)
+	plt.savefig('Round of 16({})'.format(wmk))
 	plt.show()
+	plt.close()
 
 	x = np.arange(4)
 	width = 0.35
 	fig, ax = plt.subplots()
-	rects3 = ax.bar(x - width / 2, left[8:12], width)
-	rects4 = ax.bar(x + width / 2, right[8:12], width)
+	rects3 = ax.bar(x - width / 2, left[8:12], width, color='#008080')
+	rects4 = ax.bar(x + width / 2, right[8:12], width, color='#800000')
 	ax.spines['right'].set_visible(False)
 	ax.spines['top'].set_visible(False)
 	ax.set_ylabel('Probability')
 	ax.set_xticks(x)
 	ax.set_xticklabels(labels[8:12])
-	ax.set_title('Quarterfinal({})'.format(wmk))
+	ax.set_title('Quarterfinal({})'.format(wmk), fontsize=12)
 	autolabel(rects3)
 	autolabel(rects4)
+	plt.savefig('Quarterfinal({})'.format(wmk))
 	plt.show()
 
 	x = np.arange(3)
 	width = 0.35
 	fig, ax = plt.subplots()
-	rects5 = ax.bar(x - width / 2, left[12:], width)
-	rects6 = ax.bar(x + width / 2, right[12:], width)
+	rects5 = ax.bar(x - width / 2, left[12:], width, color='#008080')
+	rects6 = ax.bar(x + width / 2, right[12:], width, color='#800000')
 	ax.spines['right'].set_visible(False)
 	ax.spines['top'].set_visible(False)
 	ax.set_ylabel('Probability')
 	ax.set_xticks(x)
 	ax.set_xticklabels(labels[12:])
-	ax.set_title('Semifinal and Final({})'.format(wmk))
+	ax.set_title('Semifinal and Final({})'.format(wmk), fontsize=12)
 	autolabel(rects5)
 	autolabel(rects6)
+	plt.savefig('Semifinal and Final({})'.format(wmk))
 	plt.show()
 
 
@@ -201,11 +204,8 @@ df["date"] = pd.to_datetime(df["date"])
 rank = rank[(rank["rank_date"] >= "2019-1-1")].reset_index(drop=True)
 df = df[(df["date"] >= "2019-1-1")].reset_index(drop=True)
 
-rank["country_full"] = rank["country_full"].str.replace("IR Iran", "Iran").str.replace("Korea Republic",
-																					   "South Korea").str.replace("USA",
-																												  "United States")
-rank = rank.set_index(['rank_date']).groupby(['country_full'], group_keys=False).resample('D').first().fillna(
-	method='ffill').reset_index()
+rank["country_full"] = rank["country_full"].str.replace("IR Iran", "Iran").str.replace("Korea Republic", "South Korea").str.replace("USA", "United States")
+rank = rank.set_index(['rank_date']).groupby(['country_full'], group_keys=False).resample('D').first().fillna(method='ffill').reset_index()
 
 world_cup = pd.read_csv("Fifa_Worldcup_2022_Groups.csv")
 # 替换国家名称
@@ -225,7 +225,7 @@ df['is_stake'] = df['tournament'] != 'Friendly'
 X, y = df.loc[:, ['average_rank', 'rank_difference', 'point_difference', 'is_stake']], df['is_won']
 
 # 划分出训练集和测试集
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.28, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # LogisticRegression
 print("LogisticRegression: ")
@@ -263,11 +263,11 @@ params_lgb = {
 	'subsample': 0.95,
 	'subsample_freq': 20,
 	'learning_rate': 0.05
-}
+ }
 model_lgb = lgb.LGBMClassifier(**params_lgb)
 model_lgb, accuracy_lgb, roc_auc_lgb, coh_kap_lgb = run_model(model_lgb, X_train, y_train, X_test, y_test)
-#
-#
+
+
 # XGBClassifier
 print("XGBClassifier: ")
 params_xgb = {'n_estimators': 1000, 'max_depth': 25, 'learning_rate': 0.05}
@@ -286,8 +286,8 @@ world_cup['points'] = 0
 world_cup['total_prob'] = 0
 
 get_result(world_cup, model_lgb, 'lightgbm', margin)
-# get_result(world_cup, model_xgb, 'XGBClassifier', margin)
-# get_result(world_cup, model_rf, 'RandomForest', margin)
-# get_result(world_cup, model_nn, 'MLPClassifier', margin)
-# get_result(world_cup, model_dt, 'DecisionTreeClassifier', margin)
-# get_result(world_cup, model_lr, 'LogisticRegression', margin)
+get_result(world_cup, model_xgb, 'XGBClassifier', margin)
+get_result(world_cup, model_rf, 'RandomForest', margin)
+get_result(world_cup, model_nn, 'MLPClassifier', margin)
+get_result(world_cup, model_dt, 'DecisionTreeClassifier', margin)
+get_result(world_cup, model_lr, 'LogisticRegression', margin)
